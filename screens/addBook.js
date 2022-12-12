@@ -10,7 +10,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View ,TextInput,TouchableOpacity,FlatList,ScrollView,ActivityIndicator} from 'react-native';
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
-
+import uuid from 'react-native-uuid';
 //styles
 import Styles from '../styles/styles.addBook.js'
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -41,20 +41,15 @@ export default function AddBook ({ route, navigation }){
    const [booksList,setBooks]=useState(books.data.books)
  
    //hook
-   useEffect(()=>{
-    updateBooks()
-   })
 
-  
- 
    //functions
 
    //function to read books list
     const renderBooks=(data)=>{
-                    
+    //  console.log("id --",data.bookId)         
       return(
               <View
-                key={books.id}
+                key={data.bookId}
                 style={Styles.indevidualBookContainer}>
 
                 <View
@@ -87,19 +82,20 @@ export default function AddBook ({ route, navigation }){
       const booksRe= await getDoc(booksRef)
       books=booksRe
       setBooks(books.data().books)
-      console.log(booksList)
+      // console.log(books.data().books)
      }
-
+      
      //function to add book 
    const addBook=async ()=>{
       setActivityIndicator(true)
       await updateDoc(booksRef, {
-         books: arrayUnion({bookName:bookName,bookPrice:bookPrice})
+         books: arrayUnion({bookName:bookName,bookPrice:bookPrice,bookId:uuid.v4()})
        });
         setActivityIndicator(false)
         onChangeBookName('')
         onChangeBookPrice(null)
         updateBooks() 
+        
    }
 
    //function associated with addbook button
@@ -144,6 +140,7 @@ export default function AddBook ({ route, navigation }){
             style={{marginTop:10}}
             onPress={()=>{
             navigation.goBack();
+
           }}>
 
             <Icon
@@ -211,7 +208,7 @@ export default function AddBook ({ route, navigation }){
      
          <TouchableOpacity
            style={Styles.addBookButton}
-           onPress={()=>addBookButtonClick ()}
+           onPress={()=>addBookButtonClick()}
               >
 
            <Text 
@@ -231,12 +228,22 @@ export default function AddBook ({ route, navigation }){
          <Text>Books Published By Author </Text>
       </View>
       
-      <View>
+      <View style={{height:"70%"}}>
 
          <ScrollView>
 
            <View>
                {
+                booksList.length==0
+                ?
+                <View style={{height:100,justifyContent:'center',alignItems:'center'}}>
+                  <Icon
+                    name="book"
+                    size={40}
+                    color="purple" />
+                  <Text> No Books Available </Text>
+                </View>
+                :
                  booksList.map(renderBooks)
                }
            </View>

@@ -12,6 +12,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View,TextInput,TouchableOpacity,ActivityIndicator,ScrollView} from 'react-native';
 import { collection, getDocs} from "firebase/firestore"; 
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 //styles
 import Styles from '../styles/styles.addAuthor.js'
@@ -44,6 +45,15 @@ export default function AddAuthor({navigation}) {
   let [authorList,updateAuthorList]=useState([])
   const [activity,setActivityIndicator]=useState(false)
  
+  React.useEffect(() => {
+    
+   
+    const unsubscribe = navigation.addListener('focus', () => {
+      readAllAuthors()
+    });
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
   
   //functions
 
@@ -63,7 +73,7 @@ export default function AddAuthor({navigation}) {
 
  //function to render authors from mapping it 
   const renderAuthors=(doc)=>{
-    
+    // console.log("-->",doc.id)
     return(
       <View 
        key={doc.id}
@@ -77,11 +87,11 @@ export default function AddAuthor({navigation}) {
         </TouchableOpacity>
       
      </View>
-    )
-  }
+      )
+    }
 
 
-
+  
 
   return (
       //activity indecator
@@ -145,7 +155,7 @@ export default function AddAuthor({navigation}) {
                       setActivityIndicator(true)
                       addAuthor(authorName).then(()=>{
                       onAuthorNameChange('')
-                      setError('') 
+                      setError('')
                       setActivityIndicator(false)
                       readAllAuthors()
                     })
@@ -173,23 +183,14 @@ export default function AddAuthor({navigation}) {
 
            <View 
             style={Styles.innerContainer}>
-
-            <View 
-             style={Styles.authoresContainer}>
-
-              <TouchableOpacity
-                onPress={()=>{readAllAuthors()}}
-                style={Styles.seeallAuthorButton}
-                >
-
-                  <Text
-                   style={{color:'white'}}>
-                    See all Authors
-                  </Text>
-              </TouchableOpacity>
-            </View>
-
-         
+             <View style={Styles.authorListTitle}>
+              <Text style={Styles.authorListTitleText}>
+                List Of All Authors 
+              </Text>
+             </View>
+            {
+              
+            }
             <View 
              style={{height:'90%'}}>
 
@@ -199,6 +200,16 @@ export default function AddAuthor({navigation}) {
                  style={{marginTop:10}}>
 
                     {
+                      authorList.length==0
+                      ?
+                      <View style={{height:100,justifyContent:'center',alignItems:'center'}}>
+                        <Icon
+                          name="user-times"
+                          size={40}
+                          color="purple" />
+                        <Text> No Authors Available </Text>
+                      </View>
+                      :
                       authorList.map(renderAuthors)
                     }
 

@@ -41,6 +41,7 @@ export default StyleSheet.create({
          flexDirection: 'row',
          justifyContent: 'flex-end',
          width:'100%',
+        
          
       },
       addBookButtonText:{

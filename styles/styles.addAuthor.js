@@ -79,6 +79,17 @@ authorNameoutline:
   alignItems:'center',
   marginTop:10,
   borderRadius:4
+},
+authorListTitle:{justifyContent:'center',
+  alignItems:'center',
+  borderWidth:1,
+  borderRadius:4,
+  height:30,
+  backgroundColor:'grey'
+},
+authorListTitleText:{
+  color:'white',
+  fontWeight:'bold'
 }
 
 });
